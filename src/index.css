@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── 動態主題 CSS 變數 (正宗日系侘寂風 Wabi-Sabi) ─────────────────────────────── */
+
+/* 主題 1: 預設 - 深緋 (Koki-hi / 帶灰的深梅紅) */
+:root {
+  --primary: #763336;
+  --primary-light: #944A4D;
+  --primary-muted: #7633361A;
+  --bg: #F7F6F2;
+  /* 和紙般的微米灰白 */
+  --surface: #FFFFFF;
+  --surface-alt: #F0EFEA;
+  --border: #E8E6E1;
+  /* 極淡的茶色邊框 */
+  --text: #3E3A39;
+  /* 墨色 (Sumi)，比純黑更柔和 */
+  --text-muted: #8C8681;
+}
+
+/* 主題 2: Ocean - 鐵紺 (Tetsukon / 沉穩的琉璃灰藍) */
+[data-theme='ocean'] {
+  --primary: #2B4B65;
+  --primary-light: #426785;
+  --primary-muted: #2B4B651A;
+  --bg: #F4F6F7;
+  --surface: #FFFFFF;
+  --surface-alt: #ECF0F2;
+  --border: #DFE4E8;
+  --text: #2C353D;
+  --text-muted: #788796;
+}
+
+/* 主題 3: Forest - 千歲綠 (Chitose-midori / 帶灰的抹茶綠) */
+[data-theme='forest'] {
+  --primary: #4A5E4F;
+  --primary-light: #647D6A;
+  --primary-muted: #4A5E4F1A;
+  --bg: #F5F7F5;
+  --surface: #FFFFFF;
+  --surface-alt: #EEF1EE;
+  --border: #E2E8E3;
+  --text: #2E3630;
+  --text-muted: #7A8A7D;
+}
+
+/* 主題 4: Midnight - 墨色 (Sumi / 極簡石灰黑) */
+[data-theme='midnight'] {
+  --primary: #333631;
+  --primary-light: #52574F;
+  --primary-muted: #3336311A;
+  --bg: #F5F5F4;
+  --surface: #FFFFFF;
+  --surface-alt: #EDEDEB;
+  --border: #E0E0DE;
+  --text: #262625;
+  --text-muted: #858582;
+}
+
+/* 主題 5: Amber - 丁子色 (Choji-iro / 沉穩的胡桃木色) */
+[data-theme='amber'] {
+  --primary: #826645;
+  --primary-light: #A3845E;
+  --primary-muted: #8266451A;
+  --bg: #F9F7F4;
+  --surface: #FFFFFF;
+  --surface-alt: #F0EBE5;
+  --border: #E8E2D9;
+  --text: #3B332A;
+  --text-muted: #948677;
+}
+
+/* ─── Base (基礎與全域字體魔法) ───────────────────────────────────────────────── */
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    @apply antialiased;
+    /* 預設內文使用清晰的黑體 */
+    font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* 🔥 日系微銳角魔法：強制將所有按鈕、輸入框、卡片削平為 4px 圓角 */
+  button:not(.rounded-full),
+  input,
+  select,
+  textarea,
+  .card,
+  .nav-item {
+    border-radius: 4px !important;
+  }
+
+  /* 側邊欄的活動標籤也改為微銳角 */
+  .nav-item-active {
+    border-radius: 0 4px 4px 0 !important;
+  }
+
+  /* 🔥 魔法在這裡：強制所有標題與「粗體字」自動套用優雅的日系宋體 🔥 */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-bold,
+  .font-semibold,
+  .font-black,
+  strong,
+  b {
+    font-family: 'Noto Serif TC', serif !important;
+    letter-spacing: 0.03em;
+    /* 微微拉開字距，增加高級感 */
+  }
+
+  /* 讓滾動條變得極細，符合日系精緻感 */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}
+
+/* ─── Components (高密度與極簡化) ─────────────────────────────────────────── */
+@layer components {
+
+  /* 卡片：去除厚重感，縮小圓角，改用極細邊框與柔和微陰影 */
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    @apply rounded-lg;
+  }
+
+  /* 輸入框：高度變矮，Padding 減少，圓角縮小 */
+  .input-field {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    @apply w-full rounded-md px-3 py-1.5 placeholder:opacity-40 focus:outline-none transition text-sm;
+  }
+
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary-muted);
+  }
+
+  /* 按鈕：緊湊化，適合高密度排版 */
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    @apply font-medium px-4 py-1.5 rounded-md transition-colors duration-200 text-sm flex items-center justify-center;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-light);
+  }
+
+  .btn-secondary {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    @apply font-medium px-4 py-1.5 rounded-md transition-colors duration-200 text-sm hover:bg-theme-surface-alt flex items-center justify-center;
+  }
+
+  /* 導覽列項目：縮小間距，改為俐落的側邊線標示 active 狀態 */
+  .nav-item {
+    color: var(--text-muted);
+    @apply flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-150 cursor-pointer text-sm font-medium w-full border-l-2 border-transparent;
+  }
+
+  .nav-item:hover {
+    background-color: var(--primary-muted);
+    color: var(--primary);
+  }
+
+  .nav-item-active {
+    background-color: var(--primary-muted) !important;
+    color: var(--primary) !important;
+    border-left-color: var(--primary) !important;
+    border-radius: 0 6px 6px 0;
+  }
+}
+
+/* ─── Print Systems (完美保留列印設定) ────────────────────────────────────────────── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #printable-prescription,
+  #printable-prescription * {
+    visibility: visible;
+  }
+
+  * {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  #printable-prescription {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .prescription-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0mm !important;
+  }
+}

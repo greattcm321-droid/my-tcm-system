@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 輔助函數：確認是否已登入
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // 輔助函數：確認用戶所屬診所
+    function getUserClinicId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.clinicId;
+    }
+
+    // 病人資料規則 (Multi-tenant Data Isolation)
+    match /patients/{patientId} {
+      allow read, write: if isSignedIn() && request.resource.data.clinicId == getUserClinicId();
+    }
+
+    // 診所員工 (使用者 profile)
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // 其他集合 ( appointments, consultations 等同樣比照 clinicId 隔離)
+    match /{path=**}/appointments/{id} {
+        allow read, write: if isSignedIn() && (resource == null || resource.data.clinicId == getUserClinicId());
+    }
+  }
+}
