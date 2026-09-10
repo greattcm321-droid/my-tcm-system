@@ -175,7 +175,7 @@ export default function Reports() {
                     const pTotal = Number(pd.totalAmount) || 0;
 
                     // Debug log（確認資料結構，上線後可移除）
-                    if (process.env.NODE_ENV === 'development') {
+                    if (import.meta.env.DEV) {
                         console.log(`[Reports] ${app.patient_name} payment_details type=${typeof app.payment_details}, items count=${items.length}, total=${pTotal}`, pd);
                     }
 

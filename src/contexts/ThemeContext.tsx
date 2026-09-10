@@ -6,8 +6,7 @@ import {
     useCallback,
     type ReactNode,
 } from 'react'
-import { doc, updateDoc } from 'firebase/firestore'
-import { db } from '../config/firebase'
+import { supabase } from '../config/supabase'
 import type { ThemeKey, ThemeConfig } from '../types'
 
 const THEMES: Record<ThemeKey, ThemeConfig> = {
@@ -64,10 +63,10 @@ interface ThemeContextValue {
     allThemes: ThemeConfig[]
     /**
      * 設定主題並更新 localStorage。
-     * @param uid 若傳入，同步寫入 Firestore users/{uid}.themeKey（跨裝置同步）。
+     * @param uid 若傳入，同步寫入 Supabase users.theme_key（跨裝置同步）。
      */
     setTheme: (key: ThemeKey, uid?: string) => void
-    /** 由 AuthContext 登入後呼叫，「靜默」覆寫主題但不寫回 Firestore */
+    /** 由 AuthContext 登入後呼叫，「靜默」覆寫主題但不寫回 DB */
     applyThemeFromDB: (key: ThemeKey) => void
 }
 
@@ -109,11 +108,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEY, key)
         applyThemeVars(key)
 
-        // 若傳入 uid，非同步寫 Firestore（失敗不影響 UI）
+        // 若傳入 uid，非同步寫 Supabase（失敗不影響 UI）
         if (uid) {
-            updateDoc(doc(db, 'users', uid), { themeKey: key }).catch((err) =>
-                console.warn('[ThemeContext] Firestore themeKey 同步失敗:', err),
-            )
+            supabase
+                .from('users')
+                .update({ theme_key: key })
+                .eq('id', uid)
+                .then(({ error }: { error: { message: string } | null }) => {
+                    if (error) console.warn('[ThemeContext] Supabase theme_key 同步失敗:', error.message)
+                })
         }
     }, [])
 

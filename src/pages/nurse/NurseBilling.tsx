@@ -5,8 +5,7 @@ import { useRealtime } from '../../hooks/useRealtime';
 import { appointmentService } from '../../services/appointmentService';
 import { consultationService } from '../../services/consultationService';
 import { patientService } from '../../services/patientService';
-import { storage } from '../../config/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { supabase } from '../../config/supabase';
 import { clinicServiceService } from '../../services/clinicServiceService';
 import type { ClinicService } from '../../types';
 
@@ -302,9 +301,15 @@ export default function NurseBilling() {
             let voucherDocumentUrl = '';
 
             if (voucherFile) {
-                const storageRef = ref(storage, `vouchers/${selectedAppointment.id}/${voucherFile.name}`);
-                const snapshot = await uploadBytes(storageRef, voucherFile);
-                voucherDocumentUrl = await getDownloadURL(snapshot.ref);
+                const filePath = `vouchers/${selectedAppointment.id}/${voucherFile.name}`;
+                const { error: uploadError } = await supabase.storage
+                    .from('clinic-files')
+                    .upload(filePath, voucherFile, { upsert: true });
+                if (uploadError) throw uploadError;
+                const { data: urlData } = supabase.storage
+                    .from('clinic-files')
+                    .getPublicUrl(filePath);
+                voucherDocumentUrl = urlData.publicUrl;
             }
 
             const paymentInfo: PaymentDetails = JSON.parse(JSON.stringify({
