@@ -56,10 +56,10 @@ export default function AppointmentCalendar() {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const pickerRef = useRef<HTMLDivElement>(null);
 
-    const filteredPatients = useMemo(() => {
-        if (!allPatients) return [];
+    const filteredPatients = useMemo<Patient[]>(() => {
+        if (!allPatients) return [] as Patient[];
         const term = formData.patientName.toLowerCase();
-        return allPatients.filter(p => {
+        return allPatients.filter((p: Patient) => {
             return p.name.toLowerCase().includes(term) || p.phone.includes(term);
         }).slice(0, 5);
     }, [allPatients, formData.patientName]);
@@ -75,7 +75,7 @@ export default function AppointmentCalendar() {
                     .eq('clinic_id', clinicId)
                     .eq('role', 'doctor');
                 if (error) throw error;
-                const docs = (data || []).map(d => ({
+                const docs = (data || []).map((d: any) => ({
                     id: d.id,
                     // 🔥 這裡已經修正：對齊資料庫真正的欄位名稱 `name`
                     displayName: d.name || d.display_name || '未命名醫師'
@@ -112,7 +112,7 @@ export default function AppointmentCalendar() {
         'cancelled': { label: '已取消', color: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
     };
 
-    const handleInputChange = (field: string, value: string) => {
+    const handleInputChange = (field: keyof typeof formData, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (field === 'patientName') setIsPickerOpen(true);
     };

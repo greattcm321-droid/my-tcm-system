@@ -80,7 +80,7 @@ export function useRealtime<T>(
             if (fetchError) throw fetchError;
             
             // 由於 Supabase 傳回的是 snake_case，我們需要做通用轉換
-            setData((resultData || []).map(row => keysToCamel(row)));
+            setData((resultData || []).map((row: any) => keysToCamel(row)));
             setError(null);
         } catch (err: any) {
             console.error(`[useRealtime] Error fetching ${collectionName}:`, err);

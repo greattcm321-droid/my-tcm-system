@@ -72,20 +72,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { applyThemeFromDB } = useTheme()
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session)
-            if (!session) setLoading(false)
-        })
+        supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
+            const session = data.session;
+            setSession(session);
+            if (!session) setLoading(false);
+        });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-            setSession(currentSession)
-            if (!currentSession) {
-                setUserProfile(null)
-                setLoading(false)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
+            setSession(session);
+            if (!session) {
+                setUserProfile(null);
+                setLoading(false);
             }
-        })
+        });
 
-        return () => subscription.unsubscribe()
+        return () => subscription.unsubscribe();
     }, [])
 
     useEffect(() => {

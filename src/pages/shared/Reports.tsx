@@ -68,7 +68,7 @@ export default function Reports() {
                 .eq('role', 'doctor');
                 
             if (!error && data) {
-                setDoctors(data.map(d => ({ id: d.id, name: d.name || '未命名' })));
+                setDoctors(data.map((d: any) => ({ id: d.id, name: d.name || '未命名' })));
             }
         };
 
@@ -311,7 +311,7 @@ export default function Reports() {
                             className="pl-8 pr-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg focus:border-theme-primary outline-none font-bold appearance-none min-w-[140px] cursor-pointer"
                         >
                             <option value="all">全體主治醫師</option>
-                            {doctors.map(d => (
+                            {doctors.map((d: { id: string; name: string }) => (
                                 <option key={d.id} value={d.id}>{d.name} 醫師</option>
                             ))}
                         </select>
